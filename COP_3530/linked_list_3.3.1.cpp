@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <list>
 
 /* Write a function find(Node* node, int valueInput) that starts at the
  * given node and returns the index of the node with the value valueInput.
@@ -8,6 +9,10 @@
  * The head of the linked list is input, as well as the index where the node should be
  * added and the value associated with the node.  The program returns the head of the updated list.
  * If the index of insertion is greater than the size of the list, the program should return NULL.
+ * 
+ * Write the method std::string findInList(std::list<int> &myList, int valueToFind). The method
+ * takes as arguments: a list and a value. The method implementation must create an iterator
+ * and use the iterator to find the value in the list.  Return -1 if the item is not in the list.
  */
 
 struct Node
@@ -44,6 +49,20 @@ Node* add(Node* head, int index, int valueInput)
     return head;
 }
 
+int findInList(std::list<int> &myList, int valueToFind)
+{
+    int i = 0;
+    auto it = myList.cbegin();
+    for(;it != myList.cend(); ++it, ++i)
+    {
+        if (*it == valueToFind)
+            break;
+    }
+    if (it == myList.cend())
+        return -1;
+    return i;
+}
+
 TEST(LinkedList, NodeFind)
 {
     Node d{4};
@@ -65,8 +84,10 @@ TEST(LinkedList, NodeAdd)
 
 // 1 2 3 4
     auto head = add(&a, 0, 0);
+
 // 0 1 2 3 4
     head = add(head, 1, 5);
+
 // 0 5 1 2 3 4
     EXPECT_EQ(add(head, 7, 10), nullptr);
 
@@ -90,6 +111,15 @@ TEST(LinkedList, NodeAdd)
     EXPECT_EQ(node->value, 10);
     node = node->next;
     EXPECT_EQ(node, nullptr);
+}
+
+TEST(LinkedList, FindValueIndex)
+{
+    std::list<int> l{1,2,3,4,5,6,7,8};
+    EXPECT_EQ(findInList(l, 1), 0);
+    EXPECT_EQ(findInList(l, 2), 1);
+    EXPECT_EQ(findInList(l, 0), -1);
+    EXPECT_EQ(findInList(l, 6), 5);
 }
 
 int main(int argc, char **argv)
