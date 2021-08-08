@@ -13,6 +13,10 @@
  * Write the method std::string findInList(std::list<int> &myList, int valueToFind). The method
  * takes as arguments: a list and a value. The method implementation must create an iterator
  * and use the iterator to find the value in the list.  Return -1 if the item is not in the list.
+ *
+ * Given a singly linked list of integers that represents a data set (with head node head), return
+ * the median of the data set.
+ *
  */
 
 struct Node
@@ -63,6 +67,24 @@ int findInList(std::list<int> &myList, int valueToFind)
     return i;
 }
 
+float median(Node* head)
+{
+    unsigned size = 0;
+    auto half = head;
+    if (head)
+        ++size, head = head->next;
+
+    while(head)
+    {
+        if (!(size&1))
+            half = half->next;
+        head = head->next;
+        ++size;
+    }
+
+    return (size&1) ? static_cast<float>(half->value) : (half->value + half->next->value)/2.;
+}
+
 TEST(LinkedList, NodeFind)
 {
     Node d{4};
@@ -93,7 +115,7 @@ TEST(LinkedList, NodeAdd)
 
     head = add(head, 6, 10);
 // 0 5 1 2 3 4 10
-    
+
     EXPECT_EQ(head->value, 0);
 
     auto node = head->next;
@@ -120,6 +142,22 @@ TEST(LinkedList, FindValueIndex)
     EXPECT_EQ(findInList(l, 2), 1);
     EXPECT_EQ(findInList(l, 0), -1);
     EXPECT_EQ(findInList(l, 6), 5);
+}
+
+TEST(LinkedList, CalcMedian)
+{
+    Node d{4};
+    Node c{3, &d};
+    Node b{2, &c};
+    Node a{1, &b};
+
+    EXPECT_EQ(median(&a), 2.5f);
+    c.next = nullptr;
+    EXPECT_EQ(median(&a), 2.f);
+    b.next = nullptr;
+    EXPECT_EQ(median(&a), 1.5f);
+    a.next = nullptr;
+    EXPECT_EQ(median(&a), 1.f);
 }
 
 int main(int argc, char **argv)
